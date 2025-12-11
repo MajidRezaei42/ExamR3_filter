@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   filter_cor.c                                       :+:      :+:    :+:   */
+/*   filter.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arezaei <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -16,9 +16,21 @@
 #endif
 
 #include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
+void	ft_printstars(int num_of_stars)
+{
+	int	i;
+
+	i = 0;
+	while (i < num_of_stars)
+	{
+		write(1, "*", 1);
+		i++;
+	}
+}
 
 void	ft_filter(char *buffer, const char *target)
 {
@@ -35,9 +47,8 @@ void	ft_filter(char *buffer, const char *target)
 			j++;
 		if (j == target_len)
 		{
-			while (j-- > 0)
-				write(1, "*", 1);
-			i += target_len;
+			ft_printstars(target_len);
+			i = i + target_len;
 		}
 		else
 		{
@@ -45,6 +56,13 @@ void	ft_filter(char *buffer, const char *target)
 			i++;
 		}
 	}
+}
+
+int	ft_error(char **to_free)
+{
+	free(*to_free);
+	perror("Error");
+	return (1);
 }
 
 int	read_all(char **result)
@@ -61,11 +79,7 @@ int	read_all(char **result)
 	{
 		buffer = realloc(*result, total + bytes + 1);
 		if (!buffer)
-		{
-			free(*result);
-			perror("Error");
-			return (1);
-		}
+			return (ft_error(result));
 		*result = buffer;
 		memmove(*result + total, temp, bytes);
 		total += bytes;
@@ -73,11 +87,7 @@ int	read_all(char **result)
 		bytes = read(0, temp, BUFFER_SIZE);
 	}
 	if (bytes < 0)
-	{
-		free(*result);
-		perror("Error");
-		return (1);
-	}
+		return (ft_error(result));
 	return (0);
 }
 
